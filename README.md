@@ -1,72 +1,63 @@
-SCP-066 Reforged (EXILED Plugin)
-An advanced SCP-066 Custom Role for SCP: Secret Laboratory built with the EXILED framework. This version is "Reforged" to provide high immersion, custom audio abilities, and a unique spawn system.
+# 🧶 SCP-066 Reforged
 
-🚀 Key Features
-Dynamic Role Replacement: Instead of spawning from Class-D, SCP-066 has a configurable chance (default 10%) to replace a random SCP at the start of the round.
+![Version](https://img.shields.io/badge/Version-10.3.0-blue.svg)
+![Framework](https://img.shields.io/badge/Framework-EXILED-red.svg)
+![Platform](https://img.shields.io/badge/Platform-SCP:%20SL-lightgrey.svg)
 
-Immersive Custom Model: Automatically spawns a MapEditorReborn schematic on the player while aggressively hiding the base Zombie model and hands.
+**SCP-066 Reforged** is an advanced Custom Role for SCP: Secret Laboratory. It focuses on high immersion, custom proximity audio, and a professional spawn-balancing system.
 
-Proximity Audio System: Integrated with AudioPlayerApi to play high-quality .ogg files directly from the player's position.
+---
 
-Zero-Damage Melee: Prevents the base Zombie role from dealing damage, forcing players to rely on their musical abilities.
+## 🚀 Key Features
 
-Symphony of Destruction: A radius-based attack that deals damage over time and applies the Concussed effect using Beethoven's Symphony.
+* **Smart SCP Replacement**: SCP-066 has a configurable **10% chance** to replace a regular SCP at the start of the round, maintaining team balance.
+* **Immersive Audio Engine**: Powered by `AudioPlayerApi`, providing 2D-global proximity audio for all sounds.
+* **Invisible Viewmodel Strategy**: Aggressively hides Zombie hands and body while keeping access to the **SCP Team Chat**.
+* **Symphony Attack**: A powerful AoE attack using Beethoven's Symphony that deals damage and applies effects to nearby humans.
+* **Lore-Accurate Scaling**: Automatically scales the player to **0.35x**, ensuring you stay small and stealthy.
 
-🛠 Implementation Details
-1. The "Invisible Zombie" Solution
-To allow SCP-066 to communicate with other SCPs using the SCP Chat (V), we used the RoleTypeId.Scp0492 (Zombie) as a base. To hide the ugly zombie hands, the plugin uses a HideBodyLoop coroutine that repeatedly disables the player's SkinnedMeshRenderer.
+---
 
-2. Strategic Spawning
-The plugin monitors the ChangingRole event. If a player is assigned an SCP role at round start, the plugin performs a "roll" based on the SpawnChance config. If successful, it overrides the initial role after a short delay to ensure stability.
+## 📥 Installation & Requirements
 
-3. Audio Implementation
-Audio is handled via AudioPlayerApi in 2D (Non-Spatial) mode. This ensures the user hears their own music perfectly while it still propagates to nearby players through the Speaker system.
+### 🛠️ Requirements
+* **EXILED Framework** (v9.13.1+).
+* **AudioPlayerApi** (In dependencies).
+* **MapEditorReborn** (For schematic support).
+* **NVorbis.dll** (Essential for .ogg decoding).
 
-⚙ Configuration
-YAML
+### 📂 Setup Guide
+1. Place `Scp066.dll` in your `EXILED/Plugins` folder.
+2. Place `AudioPlayerApi.dll` and `NVorbis.dll` in `EXILED/Plugins/dependencies`.
+3. Upload audio files (`Eric1-3.ogg`, `Notes1-6.ogg`, `Beethoven.ogg`) to:
+   `EXILED/Configs/Plugins/scp066/Audio/`.
+4. Ensure your yarn schematic is in `MapEditorReborn/Schematics`.
+
+---
+
+## ⚙ Configuration
+
+Full control via the standard EXILED config file:
+
+yaml
 scp066:
   is_enabled: true
-  # The schematic name from MapEditorReborn/Schematics folder
-  schematic_name: "Scp066"
-  # Chance (1-100) to replace a regular SCP at round start
-  spawn_chance: 10
-  # Volume of SCP-066 sounds (0.0 to 1.0)
-  volume: 0.8
-  # Symphony (Beethoven) attack stats
-  attack_duration: 24
-  damage: 5
-  attack_radius: 8
-🎮 How to Play
-Players can bind keys to the following console commands:
+  spawn_chance: 10 # Chance to replace an SCP
+  schematic_name: "Scp066" # Must match MER folder name
+  volume: 0.8 # Audio volume (0.0 - 1.0)
+  attack_duration: 24 # Duration of Beethoven attack
+  attack_radius: 8 # Radius for damage/sound
 
-Eric Sounds: .scp066 eric (or e)
+## 🎮 Player Controls
+  
+  Key,Command,Action
+  C,.scp066 eric,"Play random ""Eric!"" shout"
+  V,.scp066 music,Play random musical note
+  X,.scp066 boom,Activate Symphony Attack
 
-Random Music: .scp066 music (or m)
+## 👨‍💻 Admin Commands
+scp066 give <ID/Name> — Grant the role to a player.
+scp066 remove <ID/Name> — Remove the role from a player.
 
-Symphony Attack: .scp066 boom (or b)
-
-Recommended Binds:
-
-Plaintext
-cmdbind c .scp066 eric
-cmdbind v .scp066 music
-cmdbind x .scp066 boom
-📦 Requirements
-EXILED Framework (v9.13.1+)
-
-AudioPlayerApi (Included in dependencies)
-
-MapEditorReborn (ProjectMER) for the schematic model
-
-NVorbis.dll (For .ogg decoding)
-
-🔧 Installation
-Place Scp066.dll in your EXILED/Plugins folder.
-
-Place dependencies (AudioPlayerApi.dll, NVorbis.dll) in EXILED/Plugins/dependencies.
-
-Create the following directory: EXILED/Configs/Plugins/scp066/Audio/.
-
-Add your audio files: Eric1-3.ogg, Notes1-6.ogg, and Beethoven.ogg.
-
-Ensure your Scp066 schematic is inside the MapEditorReborn/Schematics folder.
+## 💡 Note on Implementation
+This plugin uses 2D (Non-Spatial) Audio for the user. This ensures the player always hears their own music while it propagates correctly to others via the Speaker system.
