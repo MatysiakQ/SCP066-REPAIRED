@@ -1,6 +1,6 @@
 # 🧶 SCP-066 Reforged
 
-![Version](https://img.shields.io/badge/Version-10.3.0-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.8.9-blue.svg)
 ![Framework](https://img.shields.io/badge/Framework-EXILED-red.svg)
 ![Platform](https://img.shields.io/badge/Platform-SCP:%20SL-lightgrey.svg)
 
