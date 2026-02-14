@@ -12,7 +12,7 @@
 
 Naprawiona i przepisana wersja pluginu [SCP-066 autorstwa RisottoMan](https://github.com/RisottoMan/SCP-066), dostosowana do najnowszego silnika EXILED i ProjectMER.
 
-> 💙 **Szczególne podziękowania dla [RisottoMan](https://github.com/RisottoMan)** za oryginalny plugin oraz **PaRRot** za pomoc przy naprawie i przepisaniu.
+> 💙 **Szczególne podziękowania dla [RisottoMan](https://github.com/RisottoMan)** za oryginalny plugin oraz **PaRRot** za model, all credits on them!
 
 ---
 
@@ -168,7 +168,7 @@ Podziękowania: **RisottoMan**, **PaRRot**
 
 A repaired and rewritten version of the [SCP-066 plugin by RisottoMan](https://github.com/RisottoMan/SCP-066), updated for the latest EXILED and ProjectMER engine.
 
-> 💙 **Special thanks to [RisottoMan](https://github.com/RisottoMan)** for the original plugin and **PaRRot** for help with the repair and rewrite.
+> 💙 **Special thanks to [RisottoMan](https://github.com/RisottoMan)** for the original plugin and **PaRRot** for model, all credits on them!
 
 ---
 
