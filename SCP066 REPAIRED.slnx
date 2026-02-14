@@ -1,0 +1,12 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="SCP066 REPAIRED.csproj" Id="2c446793-9d78-45c9-970c-60147fc4dd45">
+    <Platform Solution="Release|ARM64" Project="ARM64" />
+    <Platform Solution="Release|x64" Project="x64" />
+    <Build Solution="Debug|ARM64" Project="false" />
+  </Project>
+</Solution>
