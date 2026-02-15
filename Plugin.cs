@@ -55,11 +55,11 @@ namespace Scp066
                 Player selected = scpPool[Random.Range(0, scpPool.Count)];
                 scp066Role.AddRole(selected);
 
-                // Teleport do 173
+                // Teleport do HCZ
                 Timing.CallDelayed(0.8f, () =>
                 {
                     var room = Room.List.FirstOrDefault(r => r.Type == Exiled.API.Enums.RoomType.Lcz173);
-                    if (room != null) selected.Teleport(room.Position + Vector3.up * 1.5f);
+                    if (room != null) selected.Teleport(room.Position + Vector3.up * 2.5f);
                 });
 
                 Log.Info($"[SCP-066] Wylosowano gracza {selected.Nickname} z puli SCP.");
@@ -67,3 +67,49 @@ namespace Scp066
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

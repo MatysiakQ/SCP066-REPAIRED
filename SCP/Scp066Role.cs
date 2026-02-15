@@ -1,4 +1,5 @@
-﻿using Exiled.API.Features;
+﻿using Exiled.API.Enums;
+using Exiled.API.Features;
 using Exiled.CustomRoles.API.Features;
 using CustomPlayerEffects;
 using MEC;
@@ -31,9 +32,15 @@ namespace Scp066
                 player.MaxHumeShield = 500f;
 
 
-                player.Scale = new Vector3(0.3f, 0.3f, 0.3f);
+                player.Scale = new Vector3(0.5f, 0.5f, 0.5f);
 
-                player.EnableEffect<Slowness>(30, 9999f);
+                player.EnableEffect<Slowness>(10, 9999f);
+
+                // Ukrycie zombiaka - Fade 255 zamiast Invisible
+                player.EnableEffect(EffectType.Fade, 255, 9999f);
+
+                // Ukrycie nicku/ról nad głową
+                player.InfoArea = (PlayerInfoArea)0;
 
                 player.ClearInventory();
             });
@@ -48,6 +55,8 @@ namespace Scp066
         {
             player.Scale = Vector3.one;
             player.DisableEffect<Slowness>();
+            player.DisableEffect(EffectType.Fade);
+            player.InfoArea = PlayerInfoArea.Nickname | PlayerInfoArea.CustomInfo | PlayerInfoArea.Badge | PlayerInfoArea.Role;
 
             if (player.GameObject.TryGetComponent(out Scp066AbilityComponent comp))
                 Object.Destroy(comp);

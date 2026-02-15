@@ -121,7 +121,7 @@ namespace Scp066
             // --- SYNCHRONIZACJA POZYCJI ---
             if (_schematic != null)
             {
-                _schematic.transform.position = _player.Position + new Vector3(0, -0.3f, 0);
+                _schematic.transform.position = _player.Position + new Vector3(0, -0.55f, 0);
                 _schematic.transform.rotation = _player.Rotation;
             }
 
