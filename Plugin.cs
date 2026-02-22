@@ -61,7 +61,7 @@ namespace Scp066
                     if (selected == null || !selected.IsAlive) return;
 
                     var room = Room.List.FirstOrDefault(r => r.Type == Exiled.API.Enums.RoomType.Lcz173);
-                    if (room != null) selected.Teleport(room.Position + Vector3.up * 2.5f);
+                    if (room != null) selected.Teleport(room.Position + Vector3.up * 4f);
                 });
 
                 Log.Info($"[SCP-066] Wylosowano gracza {selected.Nickname} z puli SCP.");
