@@ -55,13 +55,18 @@ namespace Scp066
                 Player selected = scpPool[Random.Range(0, scpPool.Count)];
                 scp066Role.AddRole(selected);
 
-                // Teleport do celi 173
+                // Teleport do HCZ Armory
                 Timing.CallDelayed(0.8f, () =>
                 {
                     if (selected == null || !selected.IsAlive) return;
 
-                    var room = Room.List.FirstOrDefault(r => r.Type == Exiled.API.Enums.RoomType.Lcz173);
-                    if (room != null) selected.Teleport(room.Position + Vector3.up * 4f);
+                    var room = Room.List.FirstOrDefault(r => r.Type == Exiled.API.Enums.RoomType.HczArmory);
+
+                    // Fallback na dowolny HCZ
+                    if (room == null)
+                        room = Room.List.Where(r => r.Zone == Exiled.API.Enums.ZoneType.HeavyContainment).OrderBy(_ => UnityEngine.Random.value).FirstOrDefault();
+
+                    if (room != null) selected.Teleport(room.Position + Vector3.up * 2.5f);
                 });
 
                 Log.Info($"[SCP-066] Wylosowano gracza {selected.Nickname} z puli SCP.");
