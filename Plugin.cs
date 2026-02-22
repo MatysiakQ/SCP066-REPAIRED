@@ -55,9 +55,11 @@ namespace Scp066
                 Player selected = scpPool[Random.Range(0, scpPool.Count)];
                 scp066Role.AddRole(selected);
 
-                // Teleport do HCZ
+                // Teleport do celi 173
                 Timing.CallDelayed(0.8f, () =>
                 {
+                    if (selected == null || !selected.IsAlive) return;
+
                     var room = Room.List.FirstOrDefault(r => r.Type == Exiled.API.Enums.RoomType.Lcz173);
                     if (room != null) selected.Teleport(room.Position + Vector3.up * 2.5f);
                 });

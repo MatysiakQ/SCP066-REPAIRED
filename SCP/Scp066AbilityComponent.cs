@@ -30,6 +30,19 @@ namespace Scp066
         private void Start()
         {
             _player = Player.Get(gameObject);
+            if (_player == null)
+            {
+                Log.Error("[SCP-066] Player.Get zwrócił null w Start!");
+                Destroy(this);
+                return;
+            }
+
+            if (Plugin.Instance == null)
+            {
+                Log.Error("[SCP-066] Plugin.Instance jest null!");
+                Destroy(this);
+                return;
+            }
 
             // --- 1. WIZUALIA ---
             _schematic = ObjectSpawner.SpawnSchematic(Plugin.Instance.Config.SchematicName, _player.Position);
@@ -40,7 +53,7 @@ namespace Scp066
                 _schematic.transform.localScale = Vector3.one;
 
                 Timing.CallDelayed(1.5f, () => {
-                    if (_player != null && _schematic != null)
+                    if (_player != null && _player.Connection != null && _schematic != null)
                     {
                         NetworkIdentity ni = _schematic.gameObject.GetComponent<NetworkIdentity>();
                         if (ni != null) _player.Connection.Send(new ObjectDestroyMessage { netId = ni.netId });
@@ -209,15 +222,22 @@ namespace Scp066
 
                 foreach (Player target in Player.List)
                 {
-                    if (target == _player) continue;
+                    if (target == null || target == _player) continue;
                     if (target.Role.Team == Team.SCPs) continue;
                     if (!target.IsAlive) continue;
 
                     // Obrażenia tylko dla tych którzy słyszą muzykę (w zasięgu speakera)
                     if (Vector3.Distance(_player.Position, target.Position) > radius) continue;
 
-                    target.Hurt(damage, "SCP-066 (Symphony)");
-                    target.EnableEffect(EffectType.Concussed, 2f);
+                    try
+                    {
+                        target.Hurt(damage, "SCP-066 (Symphony)");
+                        target.EnableEffect(EffectType.Concussed, 2f);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Warn($"[SCP-066] Błąd przy zadawaniu obrażeń: {e.Message}");
+                    }
                 }
 
                 yield return Timing.WaitForSeconds(1f);
