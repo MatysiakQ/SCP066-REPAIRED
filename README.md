@@ -15,7 +15,6 @@ Całkowicie przebudowana i naprawiona wersja pluginu [SCP-066 autorstwa RisottoM
 > 💙 **Szczególne podziękowania dla:**
 > * **[RisottoMan](https://github.com/RisottoMan)** – za oryginalny plugin,
 > * **PaRRot & Parrot Industry** – za model i podstawę projektu, na której bazuje ta wersja,
-> * **TayTay** – za kod źródłowy logiki natywnego menu SS2.
 
 ---
 
@@ -32,7 +31,7 @@ Całkowicie przebudowana i naprawiona wersja pluginu [SCP-066 autorstwa RisottoM
 ## Wymagania
 - [EXILED](https://github.com/ExMod-Team/EXILED) (najnowsza wersja 9.0+)
 - [Exiled.CustomRoles](https://github.com/ExMod-Team/EXILED) (dołączone do EXILED)
-- [MapEditorReborn / ProjectMER](https://github.com/Michal78900/MapEditorReborn)
+- [ProjectMER](https://github.com/Michal78900/MapEditorReborn)
 - [AudioPlayerApi](https://github.com/ExMod-Team/AudioPlayerApi) (zamiast starego SCPSLAudioApi)
 
 ---
@@ -47,7 +46,7 @@ Wrzuć skompilowany plik `Scp066.dll` do folderu:
 ### 2. Schematic (model)
 Wrzuć folder ze schematem `Scp066` do folderu MapEditorReborn:
 
-    EXILED/Configs/MapEditorReborn/Schematics/Scp066/
+    EXILED/Configs/ProjectMER/Schematics/Scp066/
 
 ### 3. Audio
 Wrzuć pliki dźwiękowe do folderu:
@@ -145,7 +144,6 @@ A completely rebuilt and repaired version of the [SCP-066 plugin by RisottoMan](
 > 💙 **Special thanks to:**
 > * **[RisottoMan](https://github.com/RisottoMan)** – for the original plugin,
 > * **PaRRot & Parrot Industry** – for the model and the project foundation this version is based on,
-> * **TayTay** – for the native SS2 menu logic source code.
 
 ---
 
@@ -162,7 +160,7 @@ A completely rebuilt and repaired version of the [SCP-066 plugin by RisottoMan](
 ## Requirements
 - [EXILED](https://github.com/ExMod-Team/EXILED) (latest version 9.0+)
 - [Exiled.CustomRoles](https://github.com/ExMod-Team/EXILED) (included with EXILED)
-- [MapEditorReborn / ProjectMER](https://github.com/Michal78900/MapEditorReborn)
+- [ProjectMER](https://github.com/Michal78900/MapEditorReborn)
 - [AudioPlayerApi](https://github.com/ExMod-Team/AudioPlayerApi) (instead of the old SCPSLAudioApi)
 
 ---
@@ -177,7 +175,7 @@ Drop the compiled `Scp066.dll` into:
 ### 2. Schematic (model)
 Place the `Scp066` schematic folder in the MapEditorReborn directory:
 
-    EXILED/Configs/MapEditorReborn/Schematics/Scp066/
+    EXILED/Configs/ProjectMERSchematics/Scp066/
 
 ### 3. Audio
 Place audio files in:
