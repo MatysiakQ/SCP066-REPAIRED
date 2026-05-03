@@ -17,7 +17,6 @@ namespace Scp066
     public class Scp066AbilityComponent : MonoBehaviour
     {
         private Player _player;
-
         private SchematicObject _schematic;
         private AudioPlayer _audioPlayer;
         private Speaker _speaker;
@@ -25,79 +24,68 @@ namespace Scp066
         private bool _isAttackActive;
         private float _cdEric, _cdMusic, _cdAttack;
 
+        // Zegar do hintów, żeby nie zawiesić serwera w EXILED 9
+        private float _hintTimer = 0f;
+
         private string _audioPath = Path.Combine(Paths.Configs, "Plugins", "scp066", "Audio");
 
         private void Start()
         {
             _player = Player.Get(gameObject);
-            if (_player == null)
+            if (_player == null || Plugin.Instance == null)
             {
-                Log.Error("[SCP-066] Player.Get zwrócił null w Start!");
                 Destroy(this);
                 return;
             }
 
-            if (Plugin.Instance == null)
+            try
             {
-                Log.Error("[SCP-066] Plugin.Instance jest null!");
-                Destroy(this);
-                return;
+                _schematic = ObjectSpawner.SpawnSchematic(Plugin.Instance.Config.SchematicName, _player.Position);
+                if (_schematic != null)
+                {
+                    _schematic.transform.parent = null;
+                    _schematic.transform.localScale = Vector3.one;
+
+                    Timing.CallDelayed(1.5f, () => {
+                        if (_player != null && _player.Connection != null && _schematic != null)
+                        {
+                            NetworkIdentity ni = _schematic.gameObject.GetComponent<NetworkIdentity>();
+                            if (ni != null) _player.Connection.Send(new ObjectDestroyMessage { netId = ni.netId });
+                        }
+                    });
+                }
             }
+            catch (Exception e) { Log.Error($"[MER] Błąd schematu: {e}"); }
 
-            // --- 1. WIZUALIA ---
-            _schematic = ObjectSpawner.SpawnSchematic(Plugin.Instance.Config.SchematicName, _player.Position);
-
-            if (_schematic != null)
-            {
-                _schematic.transform.parent = null;
-                _schematic.transform.localScale = Vector3.one;
-
-                Timing.CallDelayed(1.5f, () => {
-                    if (_player != null && _player.Connection != null && _schematic != null)
-                    {
-                        NetworkIdentity ni = _schematic.gameObject.GetComponent<NetworkIdentity>();
-                        if (ni != null) _player.Connection.Send(new ObjectDestroyMessage { netId = ni.netId });
-                    }
-                });
-            }
-
-            // --- 2. AUDIO ---
             Timing.CallDelayed(1.2f, () =>
             {
                 try
                 {
                     if (!Directory.Exists(_audioPath))
                     {
-                        Log.Warn($"[SCP-066] Folder audio nie istnieje: {_audioPath}");
-                        return;
+                        Log.Warn($"[SCP-066] Brak folderu audio! Utwórz go: {_audioPath}");
+                        // NIE PRZERYWAMY KODU, pozwalamy na atak bez dźwięku!
                     }
-
-                    LoadClipIfExists("Beethoven");
-                    LoadClipIfExists("Eric1");
-                    LoadClipIfExists("Eric2");
-                    LoadClipIfExists("Eric3");
-                    LoadClipIfExists("Notes1");
-                    LoadClipIfExists("Notes2");
-                    LoadClipIfExists("Notes3");
-                    LoadClipIfExists("Notes4");
-                    LoadClipIfExists("Notes5");
-                    LoadClipIfExists("Notes6");
+                    else
+                    {
+                        LoadClipIfExists("Beethoven");
+                        LoadClipIfExists("Eric1"); LoadClipIfExists("Eric2"); LoadClipIfExists("Eric3");
+                        LoadClipIfExists("Notes1"); LoadClipIfExists("Notes2"); LoadClipIfExists("Notes3");
+                        LoadClipIfExists("Notes4"); LoadClipIfExists("Notes5"); LoadClipIfExists("Notes6");
+                    }
 
                     string botId = $"SCP066-{_player.Id}-{UnityEngine.Random.Range(1, 9999)}";
 
                     _audioPlayer = AudioPlayer.CreateOrGet(botId, onIntialCreation: (p) =>
                     {
                         float radius = Plugin.Instance.Config.AttackRadius;
-                        // minDistance = radius, maxDistance = radius * 2 żeby słyszalność była w całym zasięgu ataku
                         _speaker = p.AddSpeaker("Main", _player.Position, radius, false, radius);
                         if (_speaker != null) _speaker.transform.parent = null;
                     });
-
-                    Log.Debug($"[SCP-066] AudioPlayer gotowy dla gracza {_player.Nickname}");
                 }
                 catch (Exception e)
                 {
-                    Log.Error($"[SCP-066] Audio Init Error: {e}");
+                    Log.Error($"[SCP-066] Błąd Inicjalizacji Audio: {e}");
                 }
             });
 
@@ -107,20 +95,13 @@ namespace Scp066
         private void LoadClipIfExists(string alias)
         {
             string path = Path.Combine(_audioPath, alias + ".ogg");
-            if (File.Exists(path))
-            {
-                AudioClipStorage.LoadClip(path, alias);
-                Log.Debug($"[SCP-066] Załadowano klip: {alias}");
-            }
-            else
-            {
-                Log.Warn($"[SCP-066] Brak pliku: {path}");
-            }
+            if (File.Exists(path)) AudioClipStorage.LoadClip(path, alias);
         }
 
         private void OnHurting(HurtingEventArgs ev)
         {
-            if (ev.Attacker == _player && ev.DamageHandler.Type == DamageType.Scp0492)
+            // BLOKUJEMY ZWYKŁY ATAK (z łapy). Obrażenia z 'Beethoven' mają DamageType.Custom
+            if (ev.Attacker == _player && ev.DamageHandler.Type != DamageType.Custom)
             {
                 ev.IsAllowed = false;
                 ev.Amount = 0;
@@ -131,7 +112,6 @@ namespace Scp066
         {
             if (_player == null || !_player.IsAlive) return;
 
-            // --- SYNCHRONIZACJA POZYCJI ---
             if (_schematic != null)
             {
                 _schematic.transform.position = _player.Position + new Vector3(0, -0.55f, 0);
@@ -145,17 +125,23 @@ namespace Scp066
             if (_cdMusic > 0) _cdMusic -= Time.deltaTime;
             if (_cdAttack > 0) _cdAttack -= Time.deltaTime;
 
-            ShowHints();
+            // Timer do Hintów - odświeżamy tylko raz na sekundę
+            _hintTimer += Time.deltaTime;
+            if (_hintTimer >= 1f)
+            {
+                ShowHints();
+                _hintTimer = 0f; // Zaczynamy liczyć od nowa
+            }
         }
 
         private bool TryPlayAudio(string alias)
         {
             if (_audioPlayer == null)
             {
-                Log.Warn("[SCP-066] AudioPlayer nie jest jeszcze gotowy.");
+                // Jeśli serwer nie wykrył folderu z audio, powiadamia gracza, ale nie przerywa skilla
+                _player.ShowHint("<color=red>Brak plików Audio na serwerze!</color>", 2f);
                 return false;
             }
-
             _audioPlayer.AddClip(alias, Plugin.Instance.Config.Volume);
             return true;
         }
@@ -174,7 +160,8 @@ namespace Scp066
                 return;
             }
 
-            if (!TryPlayAudio("Beethoven")) return;
+            // Próbujemy odpalić muzykę. Niezależnie czy się uda, atak idzie dalej.
+            TryPlayAudio("Beethoven");
 
             _cdAttack = Plugin.Instance.Config.CooldownAttack;
             Timing.RunCoroutine(AttackProcess());
@@ -188,10 +175,10 @@ namespace Scp066
                 return;
             }
 
-            string alias = $"Eric{UnityEngine.Random.Range(1, 4)}";
-            if (!TryPlayAudio(alias)) return;
-
-            _cdEric = Plugin.Instance.Config.CooldownEric;
+            if (TryPlayAudio($"Eric{UnityEngine.Random.Range(1, 4)}"))
+            {
+                _cdEric = Plugin.Instance.Config.CooldownEric;
+            }
         }
 
         public void PlayMusic()
@@ -202,10 +189,10 @@ namespace Scp066
                 return;
             }
 
-            string alias = $"Notes{UnityEngine.Random.Range(1, 7)}";
-            if (!TryPlayAudio(alias)) return;
-
-            _cdMusic = Plugin.Instance.Config.CooldownMusic;
+            if (TryPlayAudio($"Notes{UnityEngine.Random.Range(1, 7)}"))
+            {
+                _cdMusic = Plugin.Instance.Config.CooldownMusic;
+            }
         }
 
         private IEnumerator<float> AttackProcess()
@@ -226,7 +213,6 @@ namespace Scp066
                     if (target.Role.Team == Team.SCPs) continue;
                     if (!target.IsAlive) continue;
 
-                    // Obrażenia tylko dla tych którzy słyszą muzykę (w zasięgu speakera)
                     if (Vector3.Distance(_player.Position, target.Position) > radius) continue;
 
                     try
@@ -257,14 +243,13 @@ namespace Scp066
 
             _player.ShowHint(
                 $"<align=right><b>SCP-066</b>\nBeethoven: {att}\nEric: {eric}\nNotes: {music}</align>",
-                1f
+                1.5f
             );
         }
 
         private void OnDestroy()
         {
             Exiled.Events.Handlers.Player.Hurting -= OnHurting;
-
             if (_schematic != null) _schematic.Destroy();
             if (_audioPlayer != null) _audioPlayer.Destroy();
         }
